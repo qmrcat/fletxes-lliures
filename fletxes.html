@@ -1,0 +1,805 @@
+<title>Fletxes Lliures</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #E6EBF0;
+    --board: #F8FAFC;
+    --ink: #17202B;
+    --muted: #5F6B7A;
+    --dot: #BAC4CF;
+    --line: #D3DAE2;
+    --accent: #2E57E8;
+    --hint: #D98A0B;
+    --danger: #D63E35;
+    --ok: #1F9D68;
+    --btn: #FFFFFF;
+    --btn-ink: #17202B;
+    --shadow: 0 1px 0 rgba(23,32,43,.06), 0 8px 24px -12px rgba(23,32,43,.25);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #0E1217; --board: #161C24; --ink: #E7ECF2; --muted: #8B96A5;
+      --dot: #2F3845; --line: #26303C; --accent: #7F9BFF; --hint: #F2B544;
+      --danger: #FF6A5E; --ok: #4CD39A; --btn: #1D2530; --btn-ink: #E7ECF2;
+      --shadow: 0 1px 0 rgba(0,0,0,.3), 0 10px 30px -14px rgba(0,0,0,.8);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #0E1217; --board: #161C24; --ink: #E7ECF2; --muted: #8B96A5;
+    --dot: #2F3845; --line: #26303C; --accent: #7F9BFF; --hint: #F2B544;
+    --danger: #FF6A5E; --ok: #4CD39A; --btn: #1D2530; --btn-ink: #E7ECF2;
+    --shadow: 0 1px 0 rgba(0,0,0,.3), 0 10px 30px -14px rgba(0,0,0,.8);
+  }
+
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 15px;
+    overscroll-behavior: none;
+  }
+  .app {
+    height: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    padding-inline: 16px;
+    padding-block: 12px 14px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .brand {
+    font-family: "Unbounded", "Figtree", system-ui, sans-serif;
+    font-weight: 700; font-size: 20px; letter-spacing: -0.01em;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .brand svg { width: 26px; height: 26px; color: var(--accent); flex: none; }
+  .brand span { color: var(--muted); font-weight: 500; }
+
+  .levelnav { display: flex; align-items: center; gap: 6px; }
+  .levelnav button {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1px solid var(--line); background: var(--btn); color: var(--btn-ink);
+    font-size: 20px; line-height: 1; cursor: pointer;
+    display: grid; place-items: center;
+  }
+  .levelnav button:disabled { opacity: .35; cursor: default; }
+  .lvl { text-align: center; min-width: 64px; }
+  .lvl small {
+    display: block; font-size: 10px; text-transform: uppercase;
+    letter-spacing: .12em; color: var(--muted); font-weight: 600;
+  }
+  .lvl b {
+    font-family: "Unbounded", "Figtree", system-ui, sans-serif;
+    font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums;
+  }
+
+  .status {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    flex-wrap: wrap;
+  }
+  .hearts { display: flex; gap: 4px; }
+  .hearts svg { width: 24px; height: 24px; transition: transform .25s ease; }
+  .hearts svg.full { color: var(--danger); }
+  .hearts svg.empty { color: var(--dot); }
+  .hearts svg.lost { animation: pop .45s ease; }
+  @keyframes pop { 0%{transform:scale(1)} 40%{transform:scale(1.35)} 100%{transform:scale(1)} }
+  .count { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .count b { color: var(--ink); font-weight: 700; }
+  .attempt {
+    font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 4px 9px;
+    font-variant-numeric: tabular-nums; white-space: nowrap;
+  }
+  .attempt.extra { color: var(--hint); border-color: color-mix(in srgb, var(--hint) 45%, transparent); }
+  .score { text-align: right; white-space: nowrap; }
+  .score small {
+    font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: var(--muted);
+    font-weight: 600; margin-right: 4px;
+  }
+  .score b {
+    font-family: "Unbounded", "Figtree", system-ui, sans-serif; font-size: 16px;
+    font-variant-numeric: tabular-nums;
+  }
+  .timer { display: flex; align-items: center; gap: 10px; }
+  .clock {
+    font-family: "Unbounded", "Figtree", system-ui, sans-serif; font-weight: 700; font-size: 17px;
+    font-variant-numeric: tabular-nums; min-width: 3.4em; color: var(--ink);
+  }
+  .clock.warn { color: var(--hint); }
+  .clock.crit { color: var(--danger); animation: blink 1s steps(2, start) infinite; }
+  @keyframes blink { to { opacity: .45; } }
+  .track {
+    flex: 1; height: 8px; border-radius: 999px; background: var(--line); overflow: hidden;
+  }
+  .fill {
+    height: 100%; width: 100%; border-radius: 999px; background: var(--accent);
+    transform-origin: left center; transition: background-color .3s;
+  }
+  .fill.warn { background: var(--hint); }
+  .fill.crit { background: var(--danger); }
+  .fill.extra-mark { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hint) 60%, transparent); }
+  .breakdown {
+    width: 100%; margin: 4px 0 2px; display: grid; grid-template-columns: 1fr auto; gap: 6px 12px;
+    font-size: 14px; font-variant-numeric: tabular-nums; text-align: left;
+  }
+  .breakdown dt { color: var(--muted); }
+  .breakdown dd { margin: 0; text-align: right; font-weight: 600; }
+  .breakdown dd.neg { color: var(--danger); }
+  .breakdown dt.total, .breakdown dd.total {
+    border-top: 1px solid var(--line); padding-top: 8px; color: var(--ink); font-weight: 700;
+  }
+  .breakdown dd.total { font-family: "Unbounded", "Figtree", system-ui, sans-serif; font-size: 18px; }
+  .record { font-size: 13px; font-weight: 700; color: var(--ok); }
+
+  .stage {
+    position: relative; flex: 1 1 auto; min-height: 240px;
+    touch-action: manipulation;
+  }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: pointer; }
+
+  .overlay {
+    position: absolute; inset: 0; display: grid; place-items: center;
+    background: color-mix(in srgb, var(--bg) 70%, transparent);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+  }
+  .overlay[hidden] { display: none; }
+  .card {
+    background: var(--board); border: 1px solid var(--line); border-radius: 18px;
+    box-shadow: var(--shadow); padding: 24px 26px; text-align: center;
+    max-width: 320px; width: calc(100% - 32px); box-sizing: border-box;
+    display: flex; flex-direction: column; gap: 10px; align-items: center;
+    animation: rise .35s cubic-bezier(.2,.8,.2,1);
+  }
+  @keyframes rise { from { transform: translateY(12px); opacity: .4; } to { transform: none; opacity: 1; } }
+  .card h2 {
+    font-family: "Unbounded", "Figtree", system-ui, sans-serif;
+    font-size: 22px; font-weight: 700; margin: 0; text-wrap: balance;
+  }
+  .card p { margin: 0; color: var(--muted); line-height: 1.45; }
+  .card .big { width: 44px; height: 44px; }
+  .card .big.win { color: var(--ok); }
+  .card .big.lose { color: var(--danger); }
+
+  .tip { margin: 0; color: var(--muted); font-size: 13.5px; text-align: center; line-height: 1.4; text-wrap: balance; }
+
+  .controls { display: flex; gap: 10px; justify-content: center; }
+  .btn {
+    font: 600 15px/1 "Figtree", system-ui, sans-serif;
+    border-radius: 999px; padding: 12px 20px; cursor: pointer;
+    border: 1px solid var(--line); background: var(--btn); color: var(--btn-ink);
+    display: inline-flex; align-items: center; gap: 8px; box-shadow: var(--shadow);
+  }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  :root[data-theme="dark"] .btn.primary { color: #0E1217; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn.primary { color: #0E1217; } }
+  .btn:disabled { opacity: .45; cursor: default; }
+  .btn .pill {
+    font-size: 12px; font-variant-numeric: tabular-nums;
+    background: var(--hint); color: #1b1300; border-radius: 999px; padding: 3px 7px;
+  }
+  button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) {
+    .card, .hearts svg.lost { animation: none; }
+  }
+  @media (max-width: 420px) {
+    .brand span { display: none; }
+    .btn { padding: 11px 16px; }
+  }
+</style>
+
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19V9h9V4"/><path d="M9.5 7.5 13 4l3.5 3.5"/></svg>
+      Fletxes <span>lliures</span>
+    </div>
+    <nav class="levelnav" aria-label="Nivells">
+      <button id="prevBtn" type="button" aria-label="Nivell anterior">‹</button>
+      <div class="lvl"><small>Nivell</small><b id="lvlNum">1</b></div>
+      <button id="nextBtn" type="button" aria-label="Nivell següent">›</button>
+    </nav>
+  </header>
+
+  <div class="status">
+    <div class="hearts" id="hearts" aria-label="Vides"></div>
+    <div class="attempt" id="attempt">Intent 1/3</div>
+    <div class="score"><small>Punts</small><b id="total">0</b></div>
+  </div>
+
+  <div class="timer" role="timer" aria-live="off">
+    <span class="clock" id="clock">0:00</span>
+    <div class="track" aria-hidden="true"><div class="fill" id="fill"></div></div>
+    <div class="count"><b id="left">0</b> <span id="leftLabel">fletxes</span></div>
+  </div>
+
+  <main class="stage" id="stage">
+    <canvas id="board" aria-label="Tauler de fletxes"></canvas>
+
+    <div class="overlay" id="winOv" hidden>
+      <div class="card" role="dialog" aria-labelledby="winTitle">
+        <svg class="big win" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m7.5 12.5 3 3 6-6.5"/></svg>
+        <h2 id="winTitle">Nivell superat</h2>
+        <p id="winText">Totes les fletxes han sortit.</p>
+        <dl class="breakdown" id="breakdown"></dl>
+        <p class="record" id="record" hidden></p>
+        <button class="btn primary" id="nextLevelBtn" type="button">Nivell següent</button>
+      </div>
+    </div>
+
+    <div class="overlay" id="loseOv" hidden>
+      <div class="card" role="dialog" aria-labelledby="loseTitle">
+        <svg class="big lose" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 9 6 6M15 9l-6 6"/></svg>
+        <h2 id="loseTitle">Sense vides</h2>
+        <p id="loseText">Has topat tres vegades. Torna a començar aquest tauler.</p>
+        <button class="btn primary" id="retryBtn" type="button">Torna-hi</button>
+      </div>
+    </div>
+  </main>
+
+  <p class="tip" id="tip">Toca una fletxa: surt en la direcció on apunta si té el camí lliure fins a la vora. Si topa amb una altra, perds una vida.</p>
+
+  <footer class="controls">
+    <button class="btn" id="hintBtn" type="button">Pista <span class="pill" id="hintsLeft">3</span></button>
+    <button class="btn" id="restartBtn" type="button">Reinicia</button>
+  </footer>
+</div>
+
+<script>
+(() => {
+  "use strict";
+  const $ = (id) => document.getElementById(id);
+  const canvas = $("board");
+  const ctx = canvas.getContext("2d");
+  const stage = $("stage");
+  const DIRS = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+  const MAX_LIVES = 3;
+  const MAX_HINTS = 3;
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // ---------- Emmagatzematge (opcional) ----------
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  };
+
+  // ---------- Aleatori amb llavor ----------
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function shuffle(arr, rng) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(rng() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function levelParams(n) {
+    return {
+      cols: Math.min(5 + Math.floor((n - 1) / 2), 12),
+      rows: Math.min(5 + Math.floor((n - 1) * 0.75), 16),
+      maxLen: Math.min(3 + Math.floor(n / 2), 12)
+    };
+  }
+
+  // ---------- Generador de nivells (sempre resoluble) ----------
+  // Es construeix en ordre invers: cada fletxa nova ha de tenir el camí lliure
+  // respecte de les que ja hi ha. Així, retirant-les de l'última a la primera,
+  // sempre hi ha solució.
+  function generate(cols, rows, maxLen, rng) {
+    const N = cols * rows;
+    const occ = new Int16Array(N).fill(-1);
+    const rayMax = new Int16Array(N).fill(-1);
+    const arrows = [];
+    const inb = (x, y) => x >= 0 && y >= 0 && x < cols && y < rows;
+
+    for (let pass = 0; pass < 4; pass++) {
+      const order = shuffle([...Array(N).keys()], rng);
+      for (const c of order) {
+        if (occ[c] !== -1) continue;
+        const hx = c % cols, hy = (c / cols) | 0;
+        for (const [dx, dy] of shuffle(DIRS.slice(), rng)) {
+          const nx = hx - dx, ny = hy - dy;
+          if (!inb(nx, ny) || occ[ny * cols + nx] !== -1) continue;
+          const ray = [];
+          let ok = true, x = hx + dx, y = hy + dy;
+          while (inb(x, y)) {
+            const k = y * cols + x;
+            if (occ[k] !== -1) { ok = false; break; }
+            ray.push(k); x += dx; y += dy;
+          }
+          if (!ok) continue;
+          const inRay = new Set(ray);
+          const body = [c, ny * cols + nx];
+          const inBody = new Set(body);
+          const target = 2 + Math.floor(rng() * (maxLen - 1));
+          let px = nx, py = ny, ldx = -dx, ldy = -dy;
+          while (body.length < target) {
+            const opts = [];
+            for (const [ex, ey] of DIRS) {
+              const qx = px + ex, qy = py + ey;
+              if (!inb(qx, qy)) continue;
+              const k = qy * cols + qx;
+              if (occ[k] !== -1 || inBody.has(k) || inRay.has(k)) continue;
+              opts.push([ex, ey, k]);
+            }
+            if (!opts.length) break;
+            let pick = opts.find(o => o[0] === ldx && o[1] === ldy);
+            if (!pick || rng() < 0.55) pick = opts[Math.floor(rng() * opts.length)];
+            body.push(pick[2]); inBody.add(pick[2]);
+            px += pick[0]; py += pick[1]; ldx = pick[0]; ldy = pick[1];
+          }
+          const idx = arrows.length;
+          body.reverse(); // cua ... cap
+          for (const k of body) occ[k] = idx;
+          for (const k of ray) rayMax[k] = idx;
+          arrows.push({ cells: body, dx, dy });
+          break;
+        }
+      }
+    }
+    // Omple forats allargant cues, sense bloquejar cap camí posterior
+    let changed = true;
+    while (changed) {
+      changed = false;
+      for (let c = 0; c < N; c++) {
+        if (occ[c] !== -1) continue;
+        const x = c % cols, y = (c / cols) | 0;
+        for (const [ex, ey] of shuffle(DIRS.slice(), rng)) {
+          const qx = x + ex, qy = y + ey;
+          if (!inb(qx, qy)) continue;
+          const a = occ[qy * cols + qx];
+          if (a === -1) continue;
+          const ar = arrows[a];
+          if (ar.cells[0] !== qy * cols + qx) continue;
+          if (rayMax[c] >= a) continue;
+          if (ar.cells.length >= maxLen + 4) continue;
+          ar.cells.unshift(c); occ[c] = a; changed = true;
+          break;
+        }
+      }
+    }
+    return arrows;
+  }
+
+  // ---------- Estat del joc ----------
+  let level = Math.max(1, store.get("fletxes.level", 1) | 0);
+  let maxLevel = Math.max(level, store.get("fletxes.max", 1) | 0);
+  let cols, rows, arrows, occ, lives, hints, mistakes, hintId = -1, hintUntil = 0, hoverId = -1, locked = false;
+
+  // ---------- Temps, intents i puntuació ----------
+  const MAX_ATTEMPTS = 3;
+  const PTS_ARROW = 10;       // punts per fletxa alliberada
+  const PTS_SECOND = 5;       // punts per segon sobrant
+  const PEN_EXTRA_SECOND = 10; // punts restats per cada segon extra concedit
+  let attempts = store.get("fletxes.attempts", {}) || {};
+  let best = store.get("fletxes.best", {}) || {};
+  let attempt = 1, baseTime = 60, extraStep = 15, timeLimit = 60, timeLeft = 60, lastTick = 0, timerOn = false;
+
+  function baseTimeFor(nArrows) {
+    return Math.max(30, Math.round((15 + nArrows * 3.5) / 5) * 5);
+  }
+  function extraFor(base) {
+    return Math.max(10, Math.round(base * 0.25 / 5) * 5);
+  }
+  function totalScore() {
+    return Object.values(best).reduce((s, v) => s + (v | 0), 0);
+  }
+  function fmt(sec) {
+    const t = Math.max(0, Math.ceil(sec));
+    return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")}`;
+  }
+  function renderTimer() {
+    const clock = $("clock"), fill = $("fill");
+    clock.textContent = fmt(timeLeft);
+    const frac = Math.max(0, Math.min(1, timeLeft / timeLimit));
+    fill.style.transform = `scaleX(${frac})`;
+    const crit = timeLeft <= 10, warn = !crit && frac <= 0.3;
+    clock.classList.toggle("crit", crit && timerOn && !reduceMotion);
+    clock.classList.toggle("warn", warn || (crit && (!timerOn || reduceMotion)));
+    fill.classList.toggle("crit", crit);
+    fill.classList.toggle("warn", warn);
+  }
+  function renderAttempt() {
+    const el = $("attempt");
+    const extra = (attempt - 1) * extraStep;
+    el.textContent = extra ? `Intent ${attempt}/${MAX_ATTEMPTS} · +${extra} s` : `Intent ${attempt}/${MAX_ATTEMPTS}`;
+    el.classList.toggle("extra", extra > 0);
+    $("total").textContent = totalScore().toLocaleString("ca");
+  }
+  function tick() {
+    const now = performance.now();
+    if (timerOn && !locked && !document.hidden) {
+      timeLeft -= (now - lastTick) / 1000;
+      if (timeLeft <= 0) { timeLeft = 0; renderTimer(); fail("time"); }
+      else renderTimer();
+    }
+    lastTick = now;
+  }
+  setInterval(tick, 100);
+  document.addEventListener("visibilitychange", () => { lastTick = performance.now(); });
+
+  function fail(reason) {
+    if (locked) return;
+    locked = true; timerOn = false;
+    renderCounts();
+    attempt++;
+    let msg;
+    const why = reason === "time" ? "S'ha acabat el temps." : "Has topat tres vegades.";
+    if (attempt > MAX_ATTEMPTS) {
+      attempt = 1;
+      msg = `${why} Has esgotat els ${MAX_ATTEMPTS} intents: el nivell torna a començar amb el temps inicial (${fmt(baseTime)}).`;
+    } else {
+      msg = `${why} Intent ${attempt} de ${MAX_ATTEMPTS}: tindràs ${extraStep} s més (${fmt(baseTime + (attempt - 1) * extraStep)}). El temps extra resta punts.`;
+    }
+    attempts[level] = attempt; store.set("fletxes.attempts", attempts);
+    $("loseTitle").textContent = reason === "time" ? "Temps esgotat" : "Sense vides";
+    $("loseText").textContent = msg;
+    tone(reason === "time" ? 220 : 150, 0.25, "sawtooth");
+    setTimeout(() => { $("loseOv").hidden = false; $("retryBtn").focus(); }, reason === "time" ? 150 : 650);
+  }
+  let s = 30, ox = 0, oy = 0, W = 0, H = 0, dpr = 1;
+  let C = {};
+
+  function readColors() {
+    const cs = getComputedStyle(document.documentElement);
+    const v = (n) => cs.getPropertyValue(n).trim();
+    C = { ink: v("--ink"), dot: v("--dot"), board: v("--board"), line: v("--line"),
+          hint: v("--hint"), danger: v("--danger"), accent: v("--accent"), muted: v("--muted") };
+  }
+
+  function loadLevel(n) {
+    level = n;
+    store.set("fletxes.level", level);
+    const p = levelParams(n);
+    cols = p.cols; rows = p.rows;
+    const rng = mulberry32(n * 2654435761 >>> 0);
+    const raw = generate(cols, rows, p.maxLen, rng);
+    occ = new Int16Array(cols * rows).fill(-1);
+    arrows = raw.map((r, id) => {
+      const pts = r.cells.map(k => [k % cols, (k / cols) | 0]);
+      const L = pts.length;
+      const P = pts.slice();
+      const ray = [];
+      let [x, y] = pts[L - 1];
+      x += r.dx; y += r.dy;
+      while (x >= 0 && y >= 0 && x < cols && y < rows) { P.push([x, y]); ray.push(y * cols + x); x += r.dx; y += r.dy; }
+      for (let i = 0; i < L + 60; i++) { P.push([x, y]); x += r.dx; y += r.dy; }
+      for (const k of r.cells) occ[k] = id;
+      return { id, cells: r.cells, pts, P, L, ray, state: "idle", t: 0, v: 0, tmax: 0, phase: 0, flashUntil: 0 };
+    });
+    lives = MAX_LIVES; hints = MAX_HINTS; mistakes = 0; hintId = -1; hoverId = -1; locked = false;
+    attempt = Math.min(MAX_ATTEMPTS, Math.max(1, attempts[n] | 0 || 1));
+    baseTime = baseTimeFor(arrows.length);
+    extraStep = extraFor(baseTime);
+    timeLimit = baseTime + (attempt - 1) * extraStep;
+    timeLeft = timeLimit; lastTick = performance.now(); timerOn = true;
+    renderTimer(); renderAttempt();
+    $("winOv").hidden = true; $("loseOv").hidden = true;
+    $("lvlNum").textContent = level;
+    $("prevBtn").disabled = level <= 1;
+    $("nextBtn").disabled = level >= maxLevel;
+    $("tip").textContent = level === 1
+      ? "Toca una fletxa: surt en la direcció on apunta si té el camí lliure. Si topa amb una altra, perds una vida. Allibera-les totes abans que s'acabi el temps."
+      : "Cada segon que et sobri suma punts. Si se t'acaba el temps, tens més temps a l'intent següent, però et resta punts.";
+    renderHearts(false);
+    renderCounts();
+    layout();
+    kick();
+  }
+
+  function renderHearts(animateLost) {
+    const heart = '<path d="M12 20.5s-7.5-4.6-9.3-9.2C1.4 8 3.4 4.5 6.9 4.5c2 0 3.4 1.1 5.1 3 1.7-1.9 3.1-3 5.1-3 3.5 0 5.5 3.5 4.2 6.8-1.8 4.6-9.3 9.2-9.3 9.2z"/>';
+    let html = "";
+    for (let i = 0; i < MAX_LIVES; i++) {
+      const full = i < lives;
+      const lost = animateLost && i === lives;
+      html += `<svg viewBox="0 0 24 24" class="${full ? "full" : "empty"}${lost ? " lost" : ""}" fill="currentColor" aria-hidden="true">${heart}</svg>`;
+    }
+    $("hearts").innerHTML = html;
+    $("hearts").setAttribute("aria-label", `${lives} de ${MAX_LIVES} vides`);
+  }
+  function renderCounts() {
+    const left = arrows.filter(a => a.state !== "gone" && a.state !== "escape").length;
+    $("left").textContent = left;
+    $("leftLabel").textContent = left === 1 ? "fletxa" : "fletxes";
+    $("hintsLeft").textContent = hints;
+    $("hintBtn").disabled = hints <= 0 || locked;
+  }
+
+  // ---------- Disposició ----------
+  function layout() {
+    const r = stage.getBoundingClientRect();
+    W = Math.max(1, r.width); H = Math.max(1, r.height);
+    dpr = Math.min(window.devicePixelRatio || 1, 3);
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+    const pad = 14;
+    s = Math.min((W - pad * 2) / (cols + 0.4), (H - pad * 2) / (rows + 0.4), 64);
+    ox = (W - cols * s) / 2; oy = (H - rows * s) / 2;
+    kick();
+  }
+
+  // ---------- Lògica ----------
+  function firstBlocker(a) {
+    for (let i = 0; i < a.ray.length; i++) {
+      const o = occ[a.ray[i]];
+      if (o !== -1 && o !== a.id) return { idx: a.L + i, id: o };
+    }
+    return null;
+  }
+
+  function tap(a) {
+    if (locked || a.state !== "idle") return;
+    if (hintId === a.id) hintId = -1;
+    const b = firstBlocker(a);
+    if (!b) {
+      for (const k of a.cells) if (occ[k] === a.id) occ[k] = -1;
+      a.state = "escape"; a.v = 9; a.t = 0;
+      // l'última fletxa atura el rellotge en el moment de tocar-la
+      if (arrows.every(o => o.state === "escape" || o.state === "gone")) { tick(); timerOn = false; renderTimer(); }
+      renderCounts();
+      tone(520 + Math.random() * 80, 0.07, "triangle");
+    } else {
+      a.state = "bump"; a.phase = 0; a.t = 0;
+      a.tmax = Math.max(0.25, b.idx - a.L + 0.3);
+      const now = performance.now();
+      a.flashUntil = now + 700;
+      arrows[b.id].flashUntil = now + 700;
+      lives--; mistakes++;
+      renderHearts(true);
+      tone(150, 0.16, "sawtooth");
+      try { navigator.vibrate && navigator.vibrate(60); } catch (e) {}
+      if (lives <= 0) fail("lives");
+    }
+    kick();
+  }
+
+  function checkWin() {
+    if (locked) return;
+    if (arrows.every(a => a.state === "gone")) {
+      locked = true; timerOn = false;
+      maxLevel = Math.max(maxLevel, level + 1);
+      store.set("fletxes.max", maxLevel);
+      $("nextBtn").disabled = false;
+
+      const secs = Math.floor(timeLeft);
+      const extra = (attempt - 1) * extraStep;
+      const pArrows = arrows.length * PTS_ARROW;
+      const pTime = secs * PTS_SECOND;
+      const pPen = extra * PEN_EXTRA_SECOND;
+      const pts = Math.max(0, pArrows + pTime - pPen);
+      const prevBest = best[level] | 0;
+      const isRecord = pts > prevBest;
+      if (isRecord) { best[level] = pts; store.set("fletxes.best", best); }
+      attempts[level] = 1; store.set("fletxes.attempts", attempts);
+
+      $("winTitle").textContent = `Nivell ${level} superat`;
+      $("winText").textContent = `Fet en ${fmt(timeLimit - timeLeft)} de ${fmt(timeLimit)}` +
+        (mistakes ? `, amb ${mistakes} ${mistakes === 1 ? "error" : "errors"}.` : ", sense cap error.");
+      let dl = `<dt>${arrows.length} fletxes × ${PTS_ARROW}</dt><dd>+${pArrows}</dd>` +
+               `<dt>${secs} s sobrants × ${PTS_SECOND}</dt><dd>+${pTime}</dd>`;
+      if (extra) dl += `<dt>Temps extra ${extra} s × ${PEN_EXTRA_SECOND}</dt><dd class="neg">−${pPen}</dd>`;
+      dl += `<dt class="total">Punts del nivell</dt><dd class="total">${pts.toLocaleString("ca")}</dd>`;
+      $("breakdown").innerHTML = dl;
+      const rec = $("record");
+      if (isRecord && prevBest > 0) { rec.textContent = `Nou rècord! Abans en tenies ${prevBest.toLocaleString("ca")}.`; rec.hidden = false; }
+      else if (!isRecord) { rec.textContent = `El teu rècord en aquest nivell: ${prevBest.toLocaleString("ca")} punts.`; rec.hidden = false; }
+      else rec.hidden = true;
+      renderAttempt();
+      renderCounts();
+      tone(660, 0.1, "triangle"); setTimeout(() => tone(880, 0.14, "triangle"), 110);
+      setTimeout(() => { $("winOv").hidden = false; $("nextLevelBtn").focus(); }, 250);
+    }
+  }
+
+  function useHint() {
+    if (hints <= 0 || locked) return;
+    const free = arrows.filter(a => a.state === "idle" && !firstBlocker(a));
+    if (!free.length) return;
+    free.sort((a, b) => a.id - b.id);
+    const pick = free[free.length - 1];
+    hintId = pick.id; hintUntil = performance.now() + 3200;
+    hints--; renderCounts(); kick();
+  }
+
+  // ---------- So (petit, opcional) ----------
+  let actx = null;
+  function tone(freq, dur, type) {
+    try {
+      if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+      const o = actx.createOscillator(), g = actx.createGain();
+      o.type = type; o.frequency.value = freq;
+      g.gain.setValueAtTime(0.0001, actx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.08, actx.currentTime + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + dur);
+      o.connect(g).connect(actx.destination);
+      o.start(); o.stop(actx.currentTime + dur + 0.02);
+    } catch (e) {}
+  }
+
+  // ---------- Dibuix ----------
+  const cx = (gx) => ox + (gx + 0.5) * s;
+  const cy = (gy) => oy + (gy + 0.5) * s;
+  function at(P, u) {
+    const i = Math.max(0, Math.min(Math.floor(u), P.length - 2));
+    const f = u - i;
+    return [P[i][0] + (P[i + 1][0] - P[i][0]) * f, P[i][1] + (P[i + 1][1] - P[i][1]) * f];
+  }
+
+  function drawArrow(a, color, widthMul) {
+    const P = a.P, u0 = a.t, u1 = a.t + a.L - 1;
+    const pts = [at(P, u0)];
+    for (let i = Math.floor(u0) + 1; i <= Math.floor(u1); i++) pts.push(P[i]);
+    pts.push(at(P, u1));
+    const lw = Math.max(2.2, s * 0.13) * widthMul;
+    ctx.strokeStyle = color; ctx.fillStyle = color;
+    ctx.lineWidth = lw; ctx.lineCap = "round"; ctx.lineJoin = "round";
+    ctx.beginPath();
+    ctx.moveTo(cx(pts[0][0]), cy(pts[0][1]));
+    for (let i = 1; i < pts.length; i++) ctx.lineTo(cx(pts[i][0]), cy(pts[i][1]));
+    ctx.stroke();
+    // cap de fletxa
+    const j = Math.max(0, Math.min(Math.floor(u1), P.length - 2));
+    let ux = P[j + 1][0] - P[j][0], uy = P[j + 1][1] - P[j][1];
+    const h = pts[pts.length - 1];
+    const hx = cx(h[0]), hy = cy(h[1]);
+    const len = s * 0.34 * Math.max(1, widthMul * 0.95), wid = s * 0.25 * Math.max(1, widthMul * 0.95);
+    const px = -uy, py = ux;
+    ctx.beginPath();
+    ctx.moveTo(hx + ux * len, hy + uy * len);
+    ctx.lineTo(hx - ux * s * 0.1 + px * wid, hy - uy * s * 0.1 + py * wid);
+    ctx.lineTo(hx - ux * s * 0.1 - px * wid, hy - uy * s * 0.1 - py * wid);
+    ctx.closePath();
+    ctx.lineWidth = Math.max(1, lw * 0.35);
+    ctx.fill(); ctx.stroke();
+    return pts;
+  }
+
+  function roundRect(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+  }
+
+  function draw(now) {
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    const m = s * 0.2;
+    roundRect(ox - m, oy - m, cols * s + m * 2, rows * s + m * 2, Math.min(18, s * 0.45));
+    ctx.fillStyle = C.board; ctx.fill();
+    ctx.strokeStyle = C.line; ctx.lineWidth = 1; ctx.stroke();
+
+    ctx.fillStyle = C.dot;
+    const dr = Math.max(1.3, s * 0.05);
+    for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
+      ctx.beginPath(); ctx.arc(cx(x), cy(y), dr, 0, Math.PI * 2); ctx.fill();
+    }
+
+    const pulse = 0.5 + 0.5 * Math.sin(now / 160);
+    let hintActive = hintId !== -1 && now < hintUntil;
+    if (!hintActive) hintId = -1;
+
+    const order = arrows.filter(a => a.state !== "gone");
+    // les que es mouen, per damunt
+    order.sort((a, b) => (a.state === "idle" ? 0 : 1) - (b.state === "idle" ? 0 : 1));
+    for (const a of order) {
+      let color = C.ink, wm = 1;
+      if (a.flashUntil > now) { color = C.danger; }
+      else if (a.id === hintId) { color = C.hint; wm = 1 + 0.25 * pulse; }
+      else if (a.id === hoverId && a.state === "idle") { color = C.accent; }
+      drawArrow(a, color, wm);
+    }
+  }
+
+  // ---------- Bucle d'animació ----------
+  let running = false, last = 0;
+  function kick() {
+    if (!running) { running = true; last = performance.now(); requestAnimationFrame(frame); }
+  }
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    let active = false;
+    for (const a of arrows) {
+      if (a.state === "escape") {
+        active = true;
+        a.v += (reduceMotion ? 120 : 55) * dt;
+        a.t += a.v * dt;
+        const tail = at(a.P, a.t);
+        const tx = cx(tail[0]), ty = cy(tail[1]);
+        if (tx < -s || ty < -s || tx > W + s || ty > H + s || a.t >= a.P.length - a.L - 1) {
+          a.state = "gone";
+          checkWin();
+        }
+      } else if (a.state === "bump") {
+        active = true;
+        if (a.phase === 0) {
+          a.t += 16 * dt;
+          if (a.t >= a.tmax) { a.t = a.tmax; a.phase = 1; }
+        } else {
+          a.t -= 11 * dt;
+          if (a.t <= 0) { a.t = 0; a.state = "idle"; }
+        }
+      }
+      if (a.flashUntil > now) active = true;
+    }
+    if (hintId !== -1 && now < hintUntil) active = true;
+    draw(now);
+    if (active) requestAnimationFrame(frame);
+    else { running = false; draw(now); }
+  }
+
+  // ---------- Entrada ----------
+  function pick(ev) {
+    const r = canvas.getBoundingClientRect();
+    const gx = (ev.clientX - r.left - ox) / s - 0.5;
+    const gy = (ev.clientY - r.top - oy) / s - 0.5;
+    let best = null, bd = 0.6;
+    for (const a of arrows) {
+      if (a.state !== "idle") continue;
+      const p = a.pts;
+      for (let i = 0; i < p.length; i++) {
+        const A = p[i], B = p[Math.min(i + 1, p.length - 1)];
+        const vx = B[0] - A[0], vy = B[1] - A[1];
+        const l2 = vx * vx + vy * vy;
+        let t = l2 ? ((gx - A[0]) * vx + (gy - A[1]) * vy) / l2 : 0;
+        t = Math.max(0, Math.min(1, t));
+        const dx = gx - (A[0] + vx * t), dy = gy - (A[1] + vy * t);
+        let d = Math.hypot(dx, dy);
+        if (i === p.length - 1) d -= 0.08; // afavoreix el cap
+        if (d < bd) { bd = d; best = a; }
+      }
+    }
+    return best;
+  }
+  canvas.addEventListener("pointerdown", (ev) => {
+    if (actx && actx.state === "suspended") actx.resume();
+    const a = pick(ev);
+    if (a) tap(a);
+  });
+  canvas.addEventListener("pointermove", (ev) => {
+    if (ev.pointerType !== "mouse") return;
+    const a = pick(ev);
+    const id = a ? a.id : -1;
+    if (id !== hoverId) { hoverId = id; kick(); }
+  });
+  canvas.addEventListener("pointerleave", () => { if (hoverId !== -1) { hoverId = -1; kick(); } });
+
+  $("hintBtn").addEventListener("click", useHint);
+  $("restartBtn").addEventListener("click", () => loadLevel(level));
+  $("retryBtn").addEventListener("click", () => loadLevel(level));
+  $("nextLevelBtn").addEventListener("click", () => loadLevel(level + 1));
+  $("prevBtn").addEventListener("click", () => { if (level > 1) loadLevel(level - 1); });
+  $("nextBtn").addEventListener("click", () => { if (level < maxLevel) loadLevel(level + 1); });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "r" || e.key === "R") loadLevel(level);
+    if (e.key === "p" || e.key === "P") useHint();
+  });
+
+  // ---------- Tema i mida ----------
+  readColors();
+  const mq = window.matchMedia("(prefers-color-scheme: dark)");
+  (mq.addEventListener ? mq.addEventListener("change", () => { readColors(); kick(); }) : mq.addListener(() => { readColors(); kick(); }));
+  new MutationObserver(() => { readColors(); kick(); })
+    .observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  if ("ResizeObserver" in window) new ResizeObserver(() => layout()).observe(stage);
+  else window.addEventListener("resize", layout);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => layout());
+
+  loadLevel(level);
+})();
+</script>

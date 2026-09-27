@@ -1,0 +1,117 @@
+# Fletxes Lliures
+
+Trencaclosques de lògica per al navegador, inspirat en els jocs tipus *Arrow Puzzle*. El tauler és ple de fletxes i has de fer-les sortir totes, en l'ordre correcte, abans que s'acabi el temps.
+
+El joc és un sol fitxer HTML (`fletxes.html`) amb HTML, CSS i JavaScript propis, sense cap framework ni llibreria.
+
+## Com jugar
+
+1. Toca (o fes clic a) una fletxa.
+2. Si el camí des del cap de la fletxa fins a la vora del tauler és lliure, la fletxa llisca seguint el seu traç i surt del tauler.
+3. Si topa amb una altra fletxa, rebota i perds una vida.
+4. Allibera totes les fletxes abans que s'acabi el temps per superar el nivell.
+
+Cada fletxa que surt deixa lliure el camí d'altres fletxes. Per això has de pensar en quin ordre les toques.
+
+## Regles
+
+### Vides
+- Tens **3 vides** per intent.
+- Perds una vida cada vegada que una fletxa topa amb una altra.
+
+### Temps
+- Cada nivell té un temps límit que depèn del nombre de fletxes:
+  `temps inicial = 15 s + 3,5 s × fletxes`, arrodonit a múltiples de 5 i amb un mínim de 30 s.
+- El rellotge comença quan es carrega el nivell i s'atura quan toques l'última fletxa.
+- Si canvies de pestanya, el rellotge es posa en pausa.
+
+### Intents
+- Si **s'acaba el temps** o et **quedes sense vides**, perds l'intent i el nivell torna a començar amb **més temps**.
+- Cada intent nou afegeix un 25 % del temps inicial (com a mínim 10 s):
+
+  | Intent | Temps disponible               |
+  |--------|--------------------------------|
+  | 1/3    | temps inicial                  |
+  | 2/3    | temps inicial + 1 × temps extra |
+  | 3/3    | temps inicial + 2 × temps extra |
+
+- Si falles el tercer intent, el nivell torna a l'**intent 1** amb el temps inicial.
+- El botó **Reinicia** torna a començar el tauler amb el temps de l'intent actual i no gasta cap intent.
+
+### Pistes
+- Tens **3 pistes** per nivell. Cada pista marca en taronja una fletxa que ja pot sortir.
+
+## Puntuació
+
+Quan superes un nivell, es calculen els punts així:
+
+| Concepte                     | Punts                  |
+|------------------------------|------------------------|
+| Cada fletxa alliberada       | +10                    |
+| Cada segon que et sobra      | +5                     |
+| Cada segon de temps extra    | −10                    |
+
+- La puntuació d'un nivell mai baixa de 0.
+- El total de la capçalera suma la **millor puntuació de cada nivell**. Repetir un nivell només millora el total si hi fas un rècord.
+
+**Exemple:** un nivell de 16 fletxes té un temps inicial de 1:10 i un temps extra de 20 s.
+- Si el superes al primer intent amb 25 s sobrants: 160 + 125 = **285 punts**.
+- Si el superes al segon intent (1:30) amb 25 s sobrants: 160 + 125 − 200 = **85 punts**.
+
+## Nivells
+
+- Els nivells es generen automàticament a partir del número de nivell, de manera que un mateix nivell sempre té el mateix tauler.
+- Comencen amb un tauler de 5 × 5 i creixen fins a 12 × 16, amb fletxes cada vegada més llargues.
+- **Tots els nivells tenen solució.** El generador col·loca les fletxes en ordre invers: cada fletxa nova ha de tenir el camí lliure respecte de les que ja hi són. Retirant-les de l'última a la primera, sempre es pot resoldre.
+- Amb els botons ‹ i › al costat del número de nivell pots tornar a nivells anteriors o avançar fins al més alt que hagis desbloquejat.
+
+## Controls
+
+| Acció               | Ratolí / tàctil          | Teclat |
+|---------------------|--------------------------|--------|
+| Fer sortir una fletxa | Clic o toc a la fletxa | —      |
+| Demanar una pista   | Botó **Pista**           | `P`    |
+| Reiniciar el tauler | Botó **Reinicia**        | `R`    |
+| Canviar de nivell   | Botons ‹ i ›             | —      |
+
+## Com executar-lo
+
+No cal instal·lar res ni fer servir cap servidor. Obre `fletxes.html` amb qualsevol navegador modern (Chrome, Firefox, Safari o Edge), a l'ordinador o al mòbil.
+
+Si el vols penjar a internet, puja el fitxer a qualsevol allotjament estàtic (GitHub Pages, Netlify, el teu servidor web…).
+
+## Detalls tècnics
+
+- **Un sol fitxer:** HTML, CSS i JavaScript dins de `fletxes.html`.
+- **Sense dependències:** no fa servir cap framework ni llibreria. L'única cosa externa són les tipografies *Unbounded* i *Figtree* de Google Fonts. Si no es poden carregar, el joc fa servir les tipografies del sistema.
+- **Dibuix:** el tauler es dibuixa amb `<canvas>` i s'adapta a la mida de la pantalla i a la densitat de píxels.
+- **Tema:** s'adapta automàticament al mode clar o fosc del sistema.
+- **So:** efectes curts generats amb Web Audio API. Al mòbil, vibra quan hi ha un error (si el dispositiu ho permet).
+- **Desament:** el nivell actual, el nivell màxim desbloquejat, els intents i els rècords es desen al `localStorage` del navegador. Si el navegador no el permet (per exemple, en mode privat), el joc funciona igual però no recorda el progrés.
+
+### Claus de `localStorage`
+
+| Clau               | Contingut                                  |
+|--------------------|--------------------------------------------|
+| `fletxes.level`    | Nivell actual                              |
+| `fletxes.max`      | Nivell més alt desbloquejat                |
+| `fletxes.attempts` | Intent actual de cada nivell               |
+| `fletxes.best`     | Millor puntuació de cada nivell            |
+
+Per començar de zero, esborra aquestes claus des de les eines de desenvolupador del navegador.
+
+### Paràmetres que es poden ajustar
+
+Al principi del codi JavaScript hi ha les constants i funcions que controlen el joc:
+
+| Nom                  | Valor per defecte | Què controla                         |
+|----------------------|-------------------|--------------------------------------|
+| `MAX_LIVES`          | 3                 | Vides per intent                     |
+| `MAX_HINTS`          | 3                 | Pistes per nivell                    |
+| `MAX_ATTEMPTS`       | 3                 | Intents abans de tornar al temps inicial |
+| `PTS_ARROW`          | 10                | Punts per fletxa                     |
+| `PTS_SECOND`         | 5                 | Punts per segon sobrant              |
+| `PEN_EXTRA_SECOND`   | 10                | Punts restats per segon extra        |
+| `baseTimeFor()`      | 15 + 3,5 × fletxes | Temps inicial del nivell            |
+| `extraFor()`         | 25 % (mín. 10 s)  | Temps extra per intent               |
+| `levelParams()`      | 5×5 → 12×16       | Mida del tauler i llargada de les fletxes |
