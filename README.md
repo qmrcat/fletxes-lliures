@@ -1,6 +1,6 @@
 # Fletxes Lliures
 
-Trencaclosques de lògica per al navegador, inspirat en els jocs tipus *Arrow Puzzle*. El tauler és ple de fletxes i has de fer-les sortir totes, en l'ordre correcte, abans que s'acabi el temps.
+Trencaclosques de lògica per al navegador. El tauler és ple de fletxes i has de fer-les sortir totes, en l'ordre correcte, abans que s'acabi el temps.
 
 El joc és un sol fitxer HTML (`fletxes.html`) amb HTML, CSS i JavaScript propis, sense cap framework ni llibreria.
 
