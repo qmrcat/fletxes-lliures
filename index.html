@@ -467,12 +467,34 @@
           hint: v("--hint"), danger: v("--danger"), accent: v("--accent"), muted: v("--muted") };
   }
 
+  // Adapta la forma del tauler a l'espai disponible: mateix nombre aproximat
+  // de caselles, però amb la proporció de la pantalla, i amb una mida mínima
+  // de casella perquè les fletxes siguin fàcils de tocar al mòbil.
+  const MIN_CELL = 40;
+  function boardDims(p) {
+    const r = stage.getBoundingClientRect();
+    let w = r.width, h = r.height;
+    if (w < 100 || h < 100) { w = Math.min(window.innerWidth - 32, 688); h = Math.max(240, window.innerHeight - 260); }
+    const pad = w < 500 ? 4 : 14;
+    const aw = w - pad * 2, ah = h - pad * 2;
+    const maxC = Math.max(5, Math.floor(aw / MIN_CELL - 0.4));
+    const maxR = Math.max(5, Math.floor(ah / MIN_CELL - 0.4));
+    const cells = p.cols * p.rows;
+    const aspect = ah / aw;
+    let c = Math.round(Math.sqrt(cells / aspect));
+    c = Math.max(5, Math.min(c, maxC));
+    let rr = Math.round(cells / c);
+    rr = Math.max(5, Math.min(rr, maxR));
+    return { cols: c, rows: rr };
+  }
+
   function loadLevel(n) {
     level = n;
     store.set("fletxes.level", level);
     const p = levelParams(n);
-    cols = p.cols; rows = p.rows;
-    const rng = mulberry32(n * 2654435761 >>> 0);
+    const dims = boardDims(p);
+    cols = dims.cols; rows = dims.rows;
+    const rng = mulberry32(((n * 2654435761) ^ (cols * 131 + rows * 7919)) >>> 0);
     const raw = generate(cols, rows, p.maxLen, rng);
     occ = new Int16Array(cols * rows).fill(-1);
     arrows = raw.map((r, id) => {
