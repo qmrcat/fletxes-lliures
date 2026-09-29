@@ -1,6 +1,6 @@
 # Fletxes Lliures
 
-Trencaclosques de lògica per al navegador, inspirat en els jocs tipus *Arrow Puzzle*. El tauler és ple de fletxes i has de fer-les sortir totes, en l'ordre correcte, abans que s'acabi el temps.
+Trencaclosques de lògica per al navegador. El tauler és ple de fletxes i has de fer-les sortir totes, en l'ordre correcte, abans que s'acabi el temps.
 
 El joc és un sol fitxer HTML (`fletxes.html`) amb HTML, CSS i JavaScript propis, sense cap framework ni llibreria.
 
@@ -70,8 +70,8 @@ Quan superes un nivell, es calculen els punts així:
 ## Nivells
 
 - Els nivells es generen automàticament a partir del número de nivell. En una mateixa pantalla, un nivell sempre té el mateix tauler.
-- La mida del tauler creix amb el nivell (de 25 fins a uns 190 caselles), amb fletxes cada vegada més llargues.
-- **El tauler s'adapta a la pantalla:** les caselles es reparteixen segons la proporció de l'espai disponible (més files que columnes al mòbil, més columnes a l'ordinador) i cada casella fa com a mínim 40 px perquè les fletxes siguin fàcils de tocar. Per això, als mòbils els nivells alts tenen taulers una mica més petits que a l'ordinador. Si gires el mòbil a mig nivell, el tauler no canvia fins al nivell següent o fins que el reinicies.
+- La mida del tauler creix amb el nivell (de 30 caselles al nivell 1, 12 més per nivell, fins a un màxim de 420), amb fletxes cada vegada més llargues.
+- **El tauler s'adapta a la pantalla:** les caselles es reparteixen segons la proporció de l'espai disponible (més files que columnes al mòbil, més columnes a l'ordinador) i cada casella fa entre 30 i 52 px, perquè les fletxes siguin fàcils de tocar i no es vegin massa grans. Per això, als mòbils els nivells alts tenen taulers una mica més petits que a l'ordinador. Si gires el mòbil a mig nivell, el tauler no canvia fins al nivell següent o fins que el reinicies.
 - **Tots els nivells tenen solució.** El generador col·loca les fletxes en ordre invers: cada fletxa nova ha de tenir el camí lliure respecte de les que ja hi són. Retirant-les de l'última a la primera, sempre es pot resoldre.
 - Amb els botons ‹ i › al costat del número de nivell pots tornar a nivells anteriors o avançar fins al més alt que hagis desbloquejat.
 
@@ -127,6 +127,7 @@ Al principi del codi JavaScript hi ha les constants i funcions que controlen el 
 | `PEN_EXTRA_SECOND`   | 10                | Punts restats per segon extra        |
 | `baseTimeFor()`      | 15 + 3,5 × fletxes | Temps inicial del nivell            |
 | `extraFor()`         | 25 % (mín. 10 s)  | Temps extra per intent               |
-| `levelParams()`      | 5×5 → 12×16       | Nombre de caselles del nivell i llargada de les fletxes |
-| `MIN_CELL`           | 40                | Mida mínima de casella, en píxels    |
+| `levelParams()`      | 30 + 12 per nivell (màx. 420) | Nombre de caselles del nivell i llargada de les fletxes |
+| `MIN_CELL`           | 30                | Mida mínima de casella, en píxels    |
+| `MAX_CELL`           | 52                | Mida màxima de casella, en píxels    |
 | `boardDims()`        | —                 | Adapta columnes i files a la pantalla |

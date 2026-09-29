@@ -344,9 +344,9 @@
 
   function levelParams(n) {
     return {
-      cols: Math.min(5 + Math.floor((n - 1) / 2), 12),
-      rows: Math.min(5 + Math.floor((n - 1) * 0.75), 16),
-      maxLen: Math.min(3 + Math.floor(n / 2), 12)
+      // nombre de caselles del nivell (la forma s'adapta a la pantalla)
+      cells: Math.min(30 + (n - 1) * 12, 420),
+      maxLen: Math.min(3 + Math.floor(n / 2), 14)
     };
   }
 
@@ -573,7 +573,8 @@
   // Adapta la forma del tauler a l'espai disponible: mateix nombre aproximat
   // de caselles, però amb la proporció de la pantalla, i amb una mida mínima
   // de casella perquè les fletxes siguin fàcils de tocar al mòbil.
-  const MIN_CELL = 40;
+  const MIN_CELL = 30;   // mida mínima de casella (px)
+  const MAX_CELL = 52;   // mida màxima de casella (px)
   // Al mòbil el tauler va de vora a vora, sense marges laterals.
   const edgeMq = window.matchMedia("(max-width: 560px)");
   const isEdge = () => edgeMq.matches;
@@ -586,7 +587,7 @@
     const aw = w - pad * 2, ah = h - pad * 2;
     const maxC = Math.max(5, Math.floor(aw / MIN_CELL - mf));
     const maxR = Math.max(5, Math.floor(ah / MIN_CELL - mf));
-    const cells = p.cols * p.rows;
+    const cells = p.cells;
     const aspect = ah / aw;
     let c = Math.round(Math.sqrt(cells / aspect));
     c = Math.max(5, Math.min(c, maxC));
@@ -666,7 +667,7 @@
     canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
     const edge = isEdge();
     const pad = edge ? 0 : 14, mf = edge ? 0 : 0.4;
-    s = Math.min((W - pad * 2) / (cols + mf), (H - pad * 2) / (rows + mf), 64);
+    s = Math.min((W - pad * 2) / (cols + mf), (H - pad * 2) / (rows + mf), MAX_CELL);
     ox = (W - cols * s) / 2; oy = (H - rows * s) / 2;
     kick();
   }
@@ -783,7 +784,7 @@
     const pts = [at(P, u0)];
     for (let i = Math.floor(u0) + 1; i <= Math.floor(u1); i++) pts.push(P[i]);
     pts.push(at(P, u1));
-    const lw = Math.max(2.2, s * 0.13) * widthMul;
+    const lw = Math.max(2, s * 0.105) * widthMul;
     ctx.strokeStyle = color; ctx.fillStyle = color;
     ctx.lineWidth = lw; ctx.lineCap = "round"; ctx.lineJoin = "round";
     ctx.beginPath();
@@ -795,12 +796,12 @@
     let ux = P[j + 1][0] - P[j][0], uy = P[j + 1][1] - P[j][1];
     const h = pts[pts.length - 1];
     const hx = cx(h[0]), hy = cy(h[1]);
-    const len = s * 0.34 * Math.max(1, widthMul * 0.95), wid = s * 0.25 * Math.max(1, widthMul * 0.95);
+    const len = s * 0.3 * Math.max(1, widthMul * 0.95), wid = s * 0.21 * Math.max(1, widthMul * 0.95);
     const px = -uy, py = ux;
     ctx.beginPath();
     ctx.moveTo(hx + ux * len, hy + uy * len);
-    ctx.lineTo(hx - ux * s * 0.1 + px * wid, hy - uy * s * 0.1 + py * wid);
-    ctx.lineTo(hx - ux * s * 0.1 - px * wid, hy - uy * s * 0.1 - py * wid);
+    ctx.lineTo(hx - ux * s * 0.08 + px * wid, hy - uy * s * 0.08 + py * wid);
+    ctx.lineTo(hx - ux * s * 0.08 - px * wid, hy - uy * s * 0.08 - py * wid);
     ctx.closePath();
     ctx.lineWidth = Math.max(1, lw * 0.35);
     ctx.fill(); ctx.stroke();
