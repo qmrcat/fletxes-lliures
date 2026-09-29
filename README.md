@@ -41,6 +41,15 @@ Cada fletxa que surt deixa lliure el camí d'altres fletxes. Per això has de pe
 ### Pistes
 - Tens **3 pistes** per nivell. Cada pista marca en taronja una fletxa que ja pot sortir.
 
+### Pausa
+- El botó **Pausa** atura el rellotge i amaga el tauler, perquè no el puguis estudiar amb el temps aturat.
+- El joc també es posa en pausa sol si canvies d'aplicació o de pestanya.
+- Per continuar, toca **Continua**.
+
+### Començar de zero
+- El botó **De zero** torna la partida al nivell 1 i esborra els punts, els rècords, els intents i els nivells desbloquejats.
+- Abans d'esborrar-ho, el joc et demana confirmació. Mentre decideixes, el rellotge està aturat.
+
 ## Puntuació
 
 Quan superes un nivell, es calculen els punts així:
@@ -71,8 +80,10 @@ Quan superes un nivell, es calculen els punts així:
 | Acció               | Ratolí / tàctil          | Teclat |
 |---------------------|--------------------------|--------|
 | Fer sortir una fletxa | Clic o toc a la fletxa | —      |
+| Pausa / continuar   | Botó **Pausa**           | `Espai` o `Esc` |
 | Demanar una pista   | Botó **Pista**           | `P`    |
 | Reiniciar el tauler | Botó **Reinicia**        | `R`    |
+| Començar de zero    | Botó **De zero**         | —      |
 | Canviar de nivell   | Botons ‹ i ›             | —      |
 
 ## Com executar-lo
@@ -86,6 +97,7 @@ Si el vols penjar a internet, puja el fitxer a qualsevol allotjament estàtic (G
 - **Un sol fitxer:** HTML, CSS i JavaScript dins de `fletxes.html`.
 - **Sense dependències:** no fa servir cap framework ni llibreria. L'única cosa externa són les tipografies *Unbounded* i *Figtree* de Google Fonts. Si no es poden carregar, el joc fa servir les tipografies del sistema.
 - **Dibuix:** el tauler es dibuixa amb `<canvas>` i s'adapta a la mida de la pantalla i a la densitat de píxels.
+- **Mòbil:** en pantalles de 560 px d'amplada o menys, el tauler ocupa tota l'amplada, sense marges laterals, i la capçalera i el peu es compacten (dues files a dalt i una barra de quatre botons a baix).
 - **Tema:** s'adapta automàticament al mode clar o fosc del sistema.
 - **So:** efectes curts generats amb Web Audio API. Al mòbil, vibra quan hi ha un error (si el dispositiu ho permet).
 - **Desament:** el nivell actual, el nivell màxim desbloquejat, els intents i els rècords es desen al `localStorage` del navegador. Si el navegador no el permet (per exemple, en mode privat), el joc funciona igual però no recorda el progrés.

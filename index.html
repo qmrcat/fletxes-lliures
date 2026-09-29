@@ -52,85 +52,71 @@
     max-width: 720px;
     margin: 0 auto;
     padding-inline: 16px;
-    padding-block: 12px 14px;
+    padding-block: 8px 10px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
   }
 
-  .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  /* Capçalera compacta: fila 1 = marca, nivell, punts; fila 2 = vides, temps, fletxes, intent */
+  .top { display: flex; align-items: center; gap: 10px; min-height: 34px; }
   .brand {
     font-family: "Unbounded", "Figtree", system-ui, sans-serif;
-    font-weight: 700; font-size: 20px; letter-spacing: -0.01em;
-    display: flex; align-items: center; gap: 8px;
+    font-weight: 700; font-size: 17px; letter-spacing: -0.01em;
+    display: flex; align-items: center; gap: 7px; white-space: nowrap;
   }
-  .brand svg { width: 26px; height: 26px; color: var(--accent); flex: none; }
+  .brand svg { width: 22px; height: 22px; color: var(--accent); flex: none; }
   .brand span { color: var(--muted); font-weight: 500; }
 
-  .levelnav { display: flex; align-items: center; gap: 6px; }
+  .levelnav { display: flex; align-items: center; gap: 4px; margin-left: auto; }
   .levelnav button {
-    width: 36px; height: 36px; border-radius: 50%;
+    width: 30px; height: 30px; border-radius: 50%;
     border: 1px solid var(--line); background: var(--btn); color: var(--btn-ink);
-    font-size: 20px; line-height: 1; cursor: pointer;
-    display: grid; place-items: center;
+    font-size: 18px; line-height: 1; cursor: pointer;
+    display: grid; place-items: center; padding: 0;
   }
   .levelnav button:disabled { opacity: .35; cursor: default; }
-  .lvl { text-align: center; min-width: 64px; }
-  .lvl small {
-    display: block; font-size: 10px; text-transform: uppercase;
-    letter-spacing: .12em; color: var(--muted); font-weight: 600;
+  .lvl { display: flex; align-items: baseline; gap: 5px; justify-content: center; min-width: 62px; }
+  .lvl small, .score small {
+    font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); font-weight: 600;
   }
-  .lvl b {
+  .lvl b, .score b {
     font-family: "Unbounded", "Figtree", system-ui, sans-serif;
-    font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums;
+    font-size: 17px; font-weight: 700; font-variant-numeric: tabular-nums;
   }
+  .score { display: flex; align-items: baseline; gap: 5px; white-space: nowrap; margin-left: 6px; }
 
-  .status {
-    display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    flex-wrap: wrap;
-  }
-  .hearts { display: flex; gap: 4px; }
-  .hearts svg { width: 24px; height: 24px; transition: transform .25s ease; }
+  .status { display: flex; align-items: center; gap: 10px; min-height: 22px; }
+  .hearts { display: flex; gap: 3px; flex: none; }
+  .hearts svg { width: 18px; height: 18px; transition: transform .25s ease; }
   .hearts svg.full { color: var(--danger); }
   .hearts svg.empty { color: var(--dot); }
   .hearts svg.lost { animation: pop .45s ease; }
   @keyframes pop { 0%{transform:scale(1)} 40%{transform:scale(1.35)} 100%{transform:scale(1)} }
-  .count { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .count b { color: var(--ink); font-weight: 700; }
-  .attempt {
-    font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
-    color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 4px 9px;
-    font-variant-numeric: tabular-nums; white-space: nowrap;
-  }
-  .attempt.extra { color: var(--hint); border-color: color-mix(in srgb, var(--hint) 45%, transparent); }
-  .score { text-align: right; white-space: nowrap; }
-  .score small {
-    font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: var(--muted);
-    font-weight: 600; margin-right: 4px;
-  }
-  .score b {
-    font-family: "Unbounded", "Figtree", system-ui, sans-serif; font-size: 16px;
-    font-variant-numeric: tabular-nums;
-  }
-  .timer { display: flex; align-items: center; gap: 10px; }
   .clock {
-    font-family: "Unbounded", "Figtree", system-ui, sans-serif; font-weight: 700; font-size: 17px;
-    font-variant-numeric: tabular-nums; min-width: 3.4em; color: var(--ink);
+    font-family: "Unbounded", "Figtree", system-ui, sans-serif; font-weight: 700; font-size: 15px;
+    font-variant-numeric: tabular-nums; min-width: 3.1em; color: var(--ink); flex: none;
   }
   .clock.warn { color: var(--hint); }
   .clock.crit { color: var(--danger); animation: blink 1s steps(2, start) infinite; }
   @keyframes blink { to { opacity: .45; } }
-  .track {
-    flex: 1; height: 8px; border-radius: 999px; background: var(--line); overflow: hidden;
-  }
+  .track { flex: 1; min-width: 40px; height: 6px; border-radius: 999px; background: var(--line); overflow: hidden; }
   .fill {
     height: 100%; width: 100%; border-radius: 999px; background: var(--accent);
     transform-origin: left center; transition: background-color .3s;
   }
   .fill.warn { background: var(--hint); }
   .fill.crit { background: var(--danger); }
-  .fill.extra-mark { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hint) 60%, transparent); }
+  .count { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; font-size: 14px; flex: none; }
+  .count b { color: var(--ink); font-weight: 700; }
+  .attempt {
+    font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 2px 8px;
+    font-variant-numeric: tabular-nums; white-space: nowrap; flex: none;
+  }
+  .attempt.extra { color: var(--hint); border-color: color-mix(in srgb, var(--hint) 45%, transparent); }
+
   .breakdown {
     width: 100%; margin: 4px 0 2px; display: grid; grid-template-columns: 1fr auto; gap: 6px 12px;
     font-size: 14px; font-variant-numeric: tabular-nums; text-align: left;
@@ -155,7 +141,9 @@
     background: color-mix(in srgb, var(--bg) 70%, transparent);
     backdrop-filter: blur(3px);
     -webkit-backdrop-filter: blur(3px);
+    z-index: 2;
   }
+  .overlay.solid { background: var(--bg); backdrop-filter: none; -webkit-backdrop-filter: none; }
   .overlay[hidden] { display: none; }
   .card {
     background: var(--board); border: 1px solid var(--line); border-radius: 18px;
@@ -173,10 +161,30 @@
   .card .big { width: 44px; height: 44px; }
   .card .big.win { color: var(--ok); }
   .card .big.lose { color: var(--danger); }
+  .card .big.pause { color: var(--accent); }
+  .card .actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
 
-  .tip { margin: 0; color: var(--muted); font-size: 13.5px; text-align: center; line-height: 1.4; text-wrap: balance; }
+  .tip { margin: 0; color: var(--muted); font-size: 13px; text-align: center; line-height: 1.35; text-wrap: balance; }
 
-  .controls { display: flex; gap: 10px; justify-content: center; }
+  /* Peu: barra d'eines de quatre botons */
+  .controls {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+    width: 100%; max-width: 520px; margin: 0 auto;
+  }
+  .tool {
+    font: 600 13px/1.1 "Figtree", system-ui, sans-serif;
+    border-radius: 12px; padding: 7px 4px; cursor: pointer; min-height: 44px;
+    border: 1px solid var(--line); background: var(--btn); color: var(--btn-ink);
+    display: flex; align-items: center; justify-content: center; gap: 6px; position: relative;
+  }
+  .tool svg { width: 18px; height: 18px; flex: none; }
+  .tool:disabled { opacity: .45; cursor: default; }
+  .tool .pill {
+    font-size: 11px; font-variant-numeric: tabular-nums; line-height: 1;
+    background: var(--hint); color: #1b1300; border-radius: 999px; padding: 2px 6px;
+  }
+  .tool.on { border-color: var(--accent); color: var(--accent); }
+
   .btn {
     font: 600 15px/1 "Figtree", system-ui, sans-serif;
     border-radius: 999px; padding: 12px 20px; cursor: pointer;
@@ -184,20 +192,29 @@
     display: inline-flex; align-items: center; gap: 8px; box-shadow: var(--shadow);
   }
   .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-  :root[data-theme="dark"] .btn.primary { color: #0E1217; }
-  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn.primary { color: #0E1217; } }
+  .btn.danger { background: var(--danger); border-color: var(--danger); color: #fff; }
+  :root[data-theme="dark"] .btn.primary, :root[data-theme="dark"] .btn.danger { color: #0E1217; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn.primary, :root:not([data-theme="light"]) .btn.danger { color: #0E1217; } }
   .btn:disabled { opacity: .45; cursor: default; }
-  .btn .pill {
-    font-size: 12px; font-variant-numeric: tabular-nums;
-    background: var(--hint); color: #1b1300; border-radius: 999px; padding: 3px 7px;
-  }
   button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
   @media (prefers-reduced-motion: reduce) {
     .card, .hearts svg.lost { animation: none; }
   }
-  @media (max-width: 420px) {
+
+  /* Mòbil: el tauler ocupa tota l'amplada de la pantalla */
+  @media (max-width: 560px) {
+    .stage { margin-inline: -16px; }
     .brand span { display: none; }
-    .btn { padding: 11px 16px; }
+    .attempt .lbl { display: none; }
+    .count .lbl { display: none; }
+    .tip.optional { display: none; }
+    .tool { flex-direction: column; gap: 3px; font-size: 12px; padding: 6px 2px; }
+    .tool .pill { position: absolute; top: 4px; right: 6px; }
+  }
+  @media (max-width: 360px) {
+    .brand { display: none; }
+    .levelnav { margin-left: 0; }
+    .score { margin-left: auto; }
   }
 </style>
 
@@ -212,18 +229,15 @@
       <div class="lvl"><small>Nivell</small><b id="lvlNum">1</b></div>
       <button id="nextBtn" type="button" aria-label="Nivell següent">›</button>
     </nav>
+    <div class="score"><small>Punts</small><b id="total">0</b></div>
   </header>
 
-  <div class="status">
+  <div class="status" role="timer" aria-live="off">
     <div class="hearts" id="hearts" aria-label="Vides"></div>
-    <div class="attempt" id="attempt">Intent 1/3</div>
-    <div class="score"><small>Punts</small><b id="total">0</b></div>
-  </div>
-
-  <div class="timer" role="timer" aria-live="off">
     <span class="clock" id="clock">0:00</span>
     <div class="track" aria-hidden="true"><div class="fill" id="fill"></div></div>
-    <div class="count"><b id="left">0</b> <span id="leftLabel">fletxes</span></div>
+    <div class="count"><b id="left">0</b><span class="lbl" id="leftLabel"> fletxes</span></div>
+    <div class="attempt" id="attempt">Intent 1/3</div>
   </div>
 
   <main class="stage" id="stage">
@@ -248,13 +262,48 @@
         <button class="btn primary" id="retryBtn" type="button">Torna-hi</button>
       </div>
     </div>
+
+    <div class="overlay solid" id="pauseOv" hidden>
+      <div class="card" role="dialog" aria-labelledby="pauseTitle">
+        <svg class="big pause" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M10 8.5v7M14 8.5v7"/></svg>
+        <h2 id="pauseTitle">Pausa</h2>
+        <p id="pauseText">El rellotge està aturat.</p>
+        <button class="btn primary" id="resumeBtn" type="button">Continua</button>
+      </div>
+    </div>
+
+    <div class="overlay solid" id="resetOv" hidden>
+      <div class="card" role="dialog" aria-labelledby="resetTitle">
+        <svg class="big lose" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+        <h2 id="resetTitle">Començar de zero?</h2>
+        <p>Tornaràs al nivell 1 i s'esborraran els punts, els rècords i els nivells desbloquejats.</p>
+        <div class="actions">
+          <button class="btn" id="resetCancel" type="button">Cancel·la</button>
+          <button class="btn danger" id="resetConfirm" type="button">Sí, de zero</button>
+        </div>
+      </div>
+    </div>
   </main>
 
   <p class="tip" id="tip">Toca una fletxa: surt en la direcció on apunta si té el camí lliure fins a la vora. Si topa amb una altra, perds una vida.</p>
 
   <footer class="controls">
-    <button class="btn" id="hintBtn" type="button">Pista <span class="pill" id="hintsLeft">3</span></button>
-    <button class="btn" id="restartBtn" type="button">Reinicia</button>
+    <button class="tool" id="pauseBtn" type="button" aria-label="Pausa">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" id="pauseIcon"><path d="M9 5v14M15 5v14"/></svg>
+      <span id="pauseLabel">Pausa</span>
+    </button>
+    <button class="tool" id="hintBtn" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.4 1 1.1 1 1.8V16h5v-.3c0-.7.4-1.4 1-1.8A6 6 0 0 0 12 3z"/></svg>
+      <span>Pista</span> <span class="pill" id="hintsLeft">3</span>
+    </button>
+    <button class="tool" id="restartBtn" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>
+      <span>Reinicia</span>
+    </button>
+    <button class="tool" id="newGameBtn" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/><path d="M12 8v4l3 2"/></svg>
+      <span>De zero</span>
+    </button>
   </footer>
 </div>
 
@@ -422,13 +471,14 @@
   function renderAttempt() {
     const el = $("attempt");
     const extra = (attempt - 1) * extraStep;
-    el.textContent = extra ? `Intent ${attempt}/${MAX_ATTEMPTS} · +${extra} s` : `Intent ${attempt}/${MAX_ATTEMPTS}`;
+    el.innerHTML = `<span class="lbl">Intent </span>${attempt}/${MAX_ATTEMPTS}` + (extra ? ` · +${extra} s` : "");
+    el.title = extra ? `Intent ${attempt} de ${MAX_ATTEMPTS}, amb ${extra} s extra` : `Intent ${attempt} de ${MAX_ATTEMPTS}`;
     el.classList.toggle("extra", extra > 0);
     $("total").textContent = totalScore().toLocaleString("ca");
   }
   function tick() {
     const now = performance.now();
-    if (timerOn && !locked && !document.hidden) {
+    if (timerOn && !locked && !paused && !document.hidden) {
       timeLeft -= (now - lastTick) / 1000;
       if (timeLeft <= 0) { timeLeft = 0; renderTimer(); fail("time"); }
       else renderTimer();
@@ -436,7 +486,60 @@
     lastTick = now;
   }
   setInterval(tick, 100);
-  document.addEventListener("visibilitychange", () => { lastTick = performance.now(); });
+  document.addEventListener("visibilitychange", () => {
+    lastTick = performance.now();
+    if (document.hidden) pause(); // si canvies d'aplicació o de pestanya, el joc es posa en pausa
+  });
+
+  // ---------- Pausa ----------
+  let paused = false;
+  function canPause() { return !locked && timerOn; }
+  function pause() {
+    if (paused || !canPause()) return;
+    tick();
+    paused = true;
+    $("pauseText").textContent = `Nivell ${level} · et queden ${fmt(timeLeft)}. El rellotge està aturat.`;
+    $("pauseOv").hidden = false;
+    renderPauseBtn();
+    $("resumeBtn").focus();
+  }
+  function resume() {
+    if (!paused) return;
+    paused = false; lastTick = performance.now();
+    $("pauseOv").hidden = true; $("resetOv").hidden = true;
+    renderPauseBtn();
+  }
+  function togglePause() { paused ? resume() : pause(); }
+  function renderPauseBtn() {
+    const b = $("pauseBtn");
+    b.classList.toggle("on", paused);
+    b.setAttribute("aria-label", paused ? "Continua" : "Pausa");
+    $("pauseLabel").textContent = paused ? "Continua" : "Pausa";
+    $("pauseIcon").innerHTML = paused ? '<path d="M8 5.5v13l10-6.5z"/>' : '<path d="M9 5v14M15 5v14"/>';
+    b.disabled = !paused && !canPause();
+  }
+
+  // ---------- Partida nova (de zero) ----------
+  let pausedBeforeReset = false;
+  function askReset() {
+    pausedBeforeReset = paused;
+    if (!paused && canPause()) { tick(); paused = true; renderPauseBtn(); }
+    $("pauseOv").hidden = true;
+    $("resetOv").hidden = false;
+    $("resetCancel").focus();
+  }
+  function cancelReset() {
+    $("resetOv").hidden = true;
+    if (pausedBeforeReset) { $("pauseOv").hidden = false; }
+    else if (paused) resume();
+  }
+  function confirmReset() {
+    for (const k of ["fletxes.level", "fletxes.max", "fletxes.attempts", "fletxes.best"]) {
+      try { localStorage.removeItem(k); } catch (e) {}
+    }
+    attempts = {}; best = {}; maxLevel = 1;
+    loadLevel(1);
+  }
 
   function fail(reason) {
     if (locked) return;
@@ -471,14 +574,18 @@
   // de caselles, però amb la proporció de la pantalla, i amb una mida mínima
   // de casella perquè les fletxes siguin fàcils de tocar al mòbil.
   const MIN_CELL = 40;
+  // Al mòbil el tauler va de vora a vora, sense marges laterals.
+  const edgeMq = window.matchMedia("(max-width: 560px)");
+  const isEdge = () => edgeMq.matches;
   function boardDims(p) {
     const r = stage.getBoundingClientRect();
     let w = r.width, h = r.height;
     if (w < 100 || h < 100) { w = Math.min(window.innerWidth - 32, 688); h = Math.max(240, window.innerHeight - 260); }
-    const pad = w < 500 ? 4 : 14;
+    const edge = isEdge();
+    const pad = edge ? 0 : 14, mf = edge ? 0 : 0.4;
     const aw = w - pad * 2, ah = h - pad * 2;
-    const maxC = Math.max(5, Math.floor(aw / MIN_CELL - 0.4));
-    const maxR = Math.max(5, Math.floor(ah / MIN_CELL - 0.4));
+    const maxC = Math.max(5, Math.floor(aw / MIN_CELL - mf));
+    const maxR = Math.max(5, Math.floor(ah / MIN_CELL - mf));
     const cells = p.cols * p.rows;
     const aspect = ah / aw;
     let c = Math.round(Math.sqrt(cells / aspect));
@@ -510,6 +617,7 @@
       return { id, cells: r.cells, pts, P, L, ray, state: "idle", t: 0, v: 0, tmax: 0, phase: 0, flashUntil: 0 };
     });
     lives = MAX_LIVES; hints = MAX_HINTS; mistakes = 0; hintId = -1; hoverId = -1; locked = false;
+    paused = false; $("pauseOv").hidden = true; $("resetOv").hidden = true;
     attempt = Math.min(MAX_ATTEMPTS, Math.max(1, attempts[n] | 0 || 1));
     baseTime = baseTimeFor(arrows.length);
     extraStep = extraFor(baseTime);
@@ -520,6 +628,7 @@
     $("lvlNum").textContent = level;
     $("prevBtn").disabled = level <= 1;
     $("nextBtn").disabled = level >= maxLevel;
+    $("tip").classList.toggle("optional", level !== 1);
     $("tip").textContent = level === 1
       ? "Toca una fletxa: surt en la direcció on apunta si té el camí lliure. Si topa amb una altra, perds una vida. Allibera-les totes abans que s'acabi el temps."
       : "Cada segon que et sobri suma punts. Si se t'acaba el temps, tens més temps a l'intent següent, però et resta punts.";
@@ -543,9 +652,10 @@
   function renderCounts() {
     const left = arrows.filter(a => a.state !== "gone" && a.state !== "escape").length;
     $("left").textContent = left;
-    $("leftLabel").textContent = left === 1 ? "fletxa" : "fletxes";
+    $("leftLabel").textContent = left === 1 ? " fletxa" : " fletxes";
     $("hintsLeft").textContent = hints;
     $("hintBtn").disabled = hints <= 0 || locked;
+    renderPauseBtn();
   }
 
   // ---------- Disposició ----------
@@ -554,8 +664,9 @@
     W = Math.max(1, r.width); H = Math.max(1, r.height);
     dpr = Math.min(window.devicePixelRatio || 1, 3);
     canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
-    const pad = W < 500 ? 4 : 14;
-    s = Math.min((W - pad * 2) / (cols + 0.4), (H - pad * 2) / (rows + 0.4), 64);
+    const edge = isEdge();
+    const pad = edge ? 0 : 14, mf = edge ? 0 : 0.4;
+    s = Math.min((W - pad * 2) / (cols + mf), (H - pad * 2) / (rows + mf), 64);
     ox = (W - cols * s) / 2; oy = (H - rows * s) / 2;
     kick();
   }
@@ -570,7 +681,7 @@
   }
 
   function tap(a) {
-    if (locked || a.state !== "idle") return;
+    if (locked || paused || a.state !== "idle") return;
     if (hintId === a.id) hintId = -1;
     const b = firstBlocker(a);
     if (!b) {
@@ -634,7 +745,7 @@
   }
 
   function useHint() {
-    if (hints <= 0 || locked) return;
+    if (hints <= 0 || locked || paused) return;
     const free = arrows.filter(a => a.state === "idle" && !firstBlocker(a));
     if (!free.length) return;
     free.sort((a, b) => a.id - b.id);
@@ -705,10 +816,11 @@
   function draw(now) {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
-    const m = s * 0.2;
-    roundRect(ox - m, oy - m, cols * s + m * 2, rows * s + m * 2, Math.min(18, s * 0.45));
+    const edge = isEdge();
+    const m = edge ? 0 : s * 0.2;
+    roundRect(ox - m, oy - m, cols * s + m * 2, rows * s + m * 2, edge ? 0 : Math.min(18, s * 0.45));
     ctx.fillStyle = C.board; ctx.fill();
-    ctx.strokeStyle = C.line; ctx.lineWidth = 1; ctx.stroke();
+    if (!edge) { ctx.strokeStyle = C.line; ctx.lineWidth = 1; ctx.stroke(); }
 
     ctx.fillStyle = C.dot;
     const dr = Math.max(1.3, s * 0.05);
@@ -807,11 +919,19 @@
 
   $("hintBtn").addEventListener("click", useHint);
   $("restartBtn").addEventListener("click", () => loadLevel(level));
+  $("pauseBtn").addEventListener("click", togglePause);
+  $("resumeBtn").addEventListener("click", resume);
+  $("newGameBtn").addEventListener("click", askReset);
+  $("resetCancel").addEventListener("click", cancelReset);
+  $("resetConfirm").addEventListener("click", confirmReset);
   $("retryBtn").addEventListener("click", () => loadLevel(level));
   $("nextLevelBtn").addEventListener("click", () => loadLevel(level + 1));
   $("prevBtn").addEventListener("click", () => { if (level > 1) loadLevel(level - 1); });
   $("nextBtn").addEventListener("click", () => { if (level < maxLevel) loadLevel(level + 1); });
   document.addEventListener("keydown", (e) => {
+    if (!$("resetOv").hidden) { if (e.key === "Escape") cancelReset(); return; }
+    if (e.key === " " || e.key === "Escape") { e.preventDefault(); togglePause(); return; }
+    if (paused) return;
     if (e.key === "r" || e.key === "R") loadLevel(level);
     if (e.key === "p" || e.key === "P") useHint();
   });
@@ -822,6 +942,7 @@
   (mq.addEventListener ? mq.addEventListener("change", () => { readColors(); kick(); }) : mq.addListener(() => { readColors(); kick(); }));
   new MutationObserver(() => { readColors(); kick(); })
     .observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  if (edgeMq.addEventListener) edgeMq.addEventListener("change", () => layout());
   if ("ResizeObserver" in window) new ResizeObserver(() => layout()).observe(stage);
   else window.addEventListener("resize", layout);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => layout());
